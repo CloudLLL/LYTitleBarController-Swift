@@ -60,10 +60,7 @@ class ViewController: LYTitleBarController {
 //          self.randomTitleBarBackgroundColor = false
         
 //          self.indicatorFrameStyleRadius = 10
-        
-        
-        
-        
+              
     }
     
 

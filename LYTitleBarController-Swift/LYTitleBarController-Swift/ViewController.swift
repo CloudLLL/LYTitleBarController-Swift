@@ -36,9 +36,11 @@ class ViewController: LYTitleBarController {
         
 //          self.indicatorScrollMode = .delay
         
-            self.indicatorStyle = .bar
-        
-            self.indicatorBackgroundColor = UIColor.blueColor()
+//            self.indicatorStyle = .bar
+//        
+//            self.titleFont = UIFont.systemFontOfSize(10)
+//        
+//            self.indicatorBackgroundColor = UIColor.blueColor()
         
 //          self.randomIndicatorBackgroundColor = false
 //        

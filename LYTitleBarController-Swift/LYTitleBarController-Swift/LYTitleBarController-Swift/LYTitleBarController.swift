@@ -47,20 +47,43 @@ let screenW = UIScreen.mainScreen().bounds.size.width
 let screenH = UIScreen.mainScreen().bounds.size.height
 
 class LYTitleBarController:UIViewController,UICollectionViewDelegate,UICollectionViewDataSource {
+    ///一次最多显示的标题个数
+    var maxTitleCount : Int = 5
     ///导航条高度
     var titleBarHeight : CGFloat = 44
     ///导航条Y值
     var titleBarY : CGFloat = 64
     ///导航条的背景颜色
-    var titleBarBackgroundColor : UIColor?
+    var titleBarBackgroundColor : UIColor? = {
+            
+        return UIColor.whiteColor()
+        
+    }()
     ///导航条底部分割线颜色
-    var titleBarLineBackgroundColor : UIColor?
-    ///一次最多显示的标题个数
-    var maxTitleCount : Int = 5
+    var titleBarLineBackgroundColor : UIColor? = {
+        
+        return UIColor.lightGrayColor()
+
+     }()
+
     ///标题文字颜色
-    var titleColor : UIColor?
+    var titleColor : UIColor? = {
+
+        return UIColor.blackColor()
+        
+    }()
     ///标题文字选中颜色
-    var titleSeleSelectedColor : UIColor?
+    lazy var titleSeleSelectedColor : UIColor? = {
+        
+        return UIColor.redColor()
+        
+    }()
+    ///标题文字大小
+    lazy var titleFont : UIFont? = {
+        
+        return UIFont.systemFontOfSize(15)
+        
+    }()
     ///指示器背景颜色
     var indicatorBackgroundColor : UIColor?
     ///指示器样式
@@ -99,9 +122,7 @@ class LYTitleBarController:UIViewController,UICollectionViewDelegate,UICollectio
         
             return screenW / CGFloat ( maxTitleCount )
             
-        }
-        
-        
+            }
     }
     
     //MARK: - viewDidLoad
@@ -178,22 +199,14 @@ class LYTitleBarController:UIViewController,UICollectionViewDelegate,UICollectio
             let btn = UIButton(type: .Custom)
             
             btn.frame = CGRect(x: CGFloat(i) * titleBtnW, y: 0, width: titleBtnW, height: h)
-            
-            if titleColor == nil{
-            
-                titleColor = UIColor.blackColor()
-            }
-            
+
             btn.setTitleColor(titleColor, forState: .Normal)
-            
-            if titleSeleSelectedColor == nil{
-            
-                titleSeleSelectedColor = UIColor.redColor()
-            }
-            
+
             btn.setTitleColor(titleSeleSelectedColor, forState: .Selected)
             
             btn.setTitle(self.childViewControllers[i].title, forState: .Normal)
+            
+            btn.titleLabel?.font = titleFont
             
             btn.addTarget(self, action:"titleBtnClick:", forControlEvents: .TouchUpInside)
             
@@ -299,11 +312,6 @@ class LYTitleBarController:UIViewController,UICollectionViewDelegate,UICollectio
         
         titleBar.showsVerticalScrollIndicator = false
         
-        if titleBarBackgroundColor == nil{
-            
-            titleBarBackgroundColor = UIColor.whiteColor()
-        }
-        
         titleBar.backgroundColor = titleBarBackgroundColor
         
     }
@@ -316,11 +324,7 @@ class LYTitleBarController:UIViewController,UICollectionViewDelegate,UICollectio
         let lineView = UIView()
         
         lineView.frame = CGRect(x: 0, y: titleBarHeight - 1, width: titleBtnW * CGFloat(self.childViewControllers.count), height: 1)
-        
-        if titleBarLineBackgroundColor == nil{
-            
-            titleBarLineBackgroundColor = UIColor.lightGrayColor()
-        }
+
         
         lineView.backgroundColor = titleBarLineBackgroundColor
         

@@ -46,44 +46,10 @@ enum IndicatorScrollMode{
 let screenW = UIScreen.mainScreen().bounds.size.width
 let screenH = UIScreen.mainScreen().bounds.size.height
 
-class LYTitleBarController:UIViewController,UICollectionViewDelegate,UICollectionViewDataSource {
-    ///一次最多显示的标题个数
-    var maxTitleCount : Int = 5
-    ///导航条高度
-    var titleBarHeight : CGFloat = 44
-    ///导航条Y值
-    var titleBarY : CGFloat = 64
-    ///导航条的背景颜色
-    var titleBarBackgroundColor : UIColor? = {
-            
-        return UIColor.whiteColor()
-        
-    }()
-    ///导航条底部分割线颜色
-    var titleBarLineBackgroundColor : UIColor? = {
-        
-        return UIColor.lightGrayColor()
+class LYTitleBarController:UIViewController {
 
-     }()
 
-    ///标题文字颜色
-    var titleColor : UIColor? = {
-
-        return UIColor.blackColor()
-        
-    }()
-    ///标题文字选中颜色
-    lazy var titleSeleSelectedColor : UIColor? = {
-        
-        return UIColor.redColor()
-        
-    }()
-    ///标题文字大小
-    lazy var titleFont : UIFont? = {
-        
-        return UIFont.systemFontOfSize(15)
-        
-    }()
+    /*---------------可定制属性---------------*/
     ///指示器背景颜色
     var indicatorBackgroundColor : UIColor?
     ///指示器样式
@@ -103,7 +69,46 @@ class LYTitleBarController:UIViewController,UICollectionViewDelegate,UICollectio
     var randomIndicatorBackgroundColor :Bool = true
     ///指示器矩形样式的圆角半径 默认为指示器高度的一半
     var indicatorFrameStyleRadius : CGFloat = 0
+    ///一次最多显示的标题个数
+    var maxTitleCount : Int = 5
+    ///导航条高度
+    var titleBarHeight : CGFloat = 44
+    ///导航条Y值
+    var titleBarY : CGFloat = 64
+    /*---------------懒加载可定制属性---------------*/
+    ///导航条的背景颜色
+    var titleBarBackgroundColor : UIColor? = {
+        
+        return UIColor.whiteColor()
+        
+    }()
+    ///导航条底部分割线颜色
+    var titleBarLineBackgroundColor : UIColor? = {
+        
+        return UIColor.lightGrayColor()
+        
+    }()
     
+    ///标题文字颜色
+    var titleColor : UIColor? = {
+        
+        return UIColor.blackColor()
+        
+    }()
+    ///标题文字选中颜色
+    lazy var titleSeleSelectedColor : UIColor? = {
+        
+        return UIColor.redColor()
+        
+    }()
+    ///标题文字大小
+    lazy var titleFont : UIFont? = {
+        
+        return UIFont.systemFontOfSize(15)
+        
+    }()
+    
+    /*---------------私有属性---------------*/
     private static let cellID  = "cell"
     private var collecView : UICollectionView?
     private var titleBar : UIScrollView?
@@ -112,6 +117,8 @@ class LYTitleBarController:UIViewController,UICollectionViewDelegate,UICollectio
     private var selectedBtn : UIButton?
     private var offSetX : CGFloat = 0
     private var num : Int = 0
+    
+    /*---------------计算属性---------------*/
     private var titleBtnW : CGFloat  {
         
         if maxTitleCount > self.childViewControllers.count{
@@ -125,6 +132,7 @@ class LYTitleBarController:UIViewController,UICollectionViewDelegate,UICollectio
             }
     }
     
+    /*---------------方法---------------*/
     //MARK: - viewDidLoad
     override func viewDidLoad() {
         
@@ -133,6 +141,7 @@ class LYTitleBarController:UIViewController,UICollectionViewDelegate,UICollectio
         addCollectionView()
         
     }
+    
     //MARK: - viewDidAppear
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
@@ -150,9 +159,11 @@ class LYTitleBarController:UIViewController,UICollectionViewDelegate,UICollectio
     
         num += 1
     }
-    
-    
-    //MARK: - 添加指示器
+}
+
+//MARK: - 添加指示器
+extension LYTitleBarController{
+
     func addIndicatorView(){
         
         let indicatorView = UIView()
@@ -160,7 +171,7 @@ class LYTitleBarController:UIViewController,UICollectionViewDelegate,UICollectio
         if indicatorBackgroundColor == nil{
             
             indicatorBackgroundColor = UIColor.yellowColor()
-        
+            
         }
         indicatorView.backgroundColor = indicatorBackgroundColor
         
@@ -173,66 +184,26 @@ class LYTitleBarController:UIViewController,UICollectionViewDelegate,UICollectio
         case .frame:
             indicatorView.frame = CGRect(x: indicatorFrameStylePoorWight * 0.5, y: indicatorFrameStylePoorHeight * 0.5, width: titleBtnW - indicatorFrameStylePoorWight, height: titleBarHeight - indicatorFrameStylePoorHeight)
             if indicatorFrameStyleRadius == 0 {
-            
+                
                 indicatorFrameStyleRadius = (self.titleBarHeight - indicatorFrameStylePoorHeight) * 0.5
             }
             indicatorView.layer.cornerRadius = indicatorFrameStyleRadius
-
+            
         case .bar:
             indicatorView.frame =  CGRect(x: 0, y: titleBarHeight - indicatorBarStyleHeight, width: titleBtnW, height: indicatorBarStyleHeight)
-
+            
         case .point:
             indicatorView.frame = CGRect(x: titleBtnW * 0.5 - indicatorPointStyleRadius, y: titleBarHeight - indicatorPointStyleRadius * 2, width: indicatorPointStyleRadius * 2, height: indicatorPointStyleRadius * 2)
             indicatorView.layer.cornerRadius = indicatorPointStyleRadius
-
-        }
-        
-    }
-    
-    //MARK: - 添加按钮
-    func addTitleBtn(){
-        
-        let h = titleBarHeight
-        
-        for  i in 0 ..< (self.childViewControllers.count){
-            
-            let btn = UIButton(type: .Custom)
-            
-            btn.frame = CGRect(x: CGFloat(i) * titleBtnW, y: 0, width: titleBtnW, height: h)
-
-            btn.setTitleColor(titleColor, forState: .Normal)
-
-            btn.setTitleColor(titleSeleSelectedColor, forState: .Selected)
-            
-            btn.setTitle(self.childViewControllers[i].title, forState: .Normal)
-            
-            btn.titleLabel?.font = titleFont
-            
-            btn.addTarget(self, action:"titleBtnClick:", forControlEvents: .TouchUpInside)
-            
-            btn.tag = i
-            
-            if i == 0{
-                
-                btn.selected = true
-                
-                selectedBtn = btn
-                
-                addIndicatorView()
-                
-            }
-            
-            titleBar?.addSubview(btn)
-            
-            btns.append(btn)
             
         }
         
-        titleBar?.contentSize = CGSize(width: titleBtnW * CGFloat(self.childViewControllers.count), height: 0)
-        
     }
+}
+
+//MARK: - titleBtn点击
+extension LYTitleBarController{
     
-    //MARK: - titleBtn点击
     func titleBtnClick(btn : UIButton){
         
         selectedBtn?.selected  = false
@@ -289,13 +260,58 @@ class LYTitleBarController:UIViewController,UICollectionViewDelegate,UICollectio
                 
             }
         }
+    }
+}
+
+//MARK: - 添加按钮
+extension LYTitleBarController{
+
+    func addTitleBtn(){
         
+        let h = titleBarHeight
         
+        for  i in 0 ..< (self.childViewControllers.count){
+            
+            let btn = UIButton(type: .Custom)
+            
+            btn.frame = CGRect(x: CGFloat(i) * titleBtnW, y: 0, width: titleBtnW, height: h)
+            
+            btn.setTitleColor(titleColor, forState: .Normal)
+            
+            btn.setTitleColor(titleSeleSelectedColor, forState: .Selected)
+            
+            btn.setTitle(self.childViewControllers[i].title, forState: .Normal)
+            
+            btn.titleLabel?.font = titleFont
+            
+            btn.addTarget(self, action:"titleBtnClick:", forControlEvents: .TouchUpInside)
+            
+            btn.tag = i
+            
+            if i == 0{
+                
+                btn.selected = true
+                
+                selectedBtn = btn
+                
+                addIndicatorView()
+                
+            }
+            
+            titleBar?.addSubview(btn)
+            
+            btns.append(btn)
+            
+        }
+        
+        titleBar?.contentSize = CGSize(width: titleBtnW * CGFloat(self.childViewControllers.count), height: 0)
         
     }
+}
+
+//MARK: -  添加导航条
+extension LYTitleBarController{
     
-    
-    //MARK: -  添加导航条
     func addTitleBarView(){
         
         let titleBar = UIScrollView()
@@ -315,16 +331,19 @@ class LYTitleBarController:UIViewController,UICollectionViewDelegate,UICollectio
         titleBar.backgroundColor = titleBarBackgroundColor
         
     }
-    
-    //MARK: - 添加分割线
+
+}
+
+//MARK: - 添加分割线
+extension LYTitleBarController{
+
+// TODO: 添加分割线
     func addlineView(){
-        
-        // TODO: 添加分割线
         
         let lineView = UIView()
         
         lineView.frame = CGRect(x: 0, y: titleBarHeight - 1, width: titleBtnW * CGFloat(self.childViewControllers.count), height: 1)
-
+        
         
         lineView.backgroundColor = titleBarLineBackgroundColor
         
@@ -333,9 +352,13 @@ class LYTitleBarController:UIViewController,UICollectionViewDelegate,UICollectio
         titleBar?.addSubview(lineView)
         
     }
+
+}
+
+//MARK: - 添加collectionView
+extension LYTitleBarController{
+
     
-    
-    //MARK: - 添加collectionView
     func addCollectionView(){
         
         let flow :UICollectionViewFlowLayout = UICollectionViewFlowLayout()
@@ -373,9 +396,13 @@ class LYTitleBarController:UIViewController,UICollectionViewDelegate,UICollectio
         
         collecView.bounces = false
         
-        
     }
-    //MARK: - collection数据源
+
+}
+
+//MARK: - collection数据源
+extension LYTitleBarController :UICollectionViewDataSource{
+
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         
         let cell = collecView?.dequeueReusableCellWithReuseIdentifier(LYTitleBarController.cellID, forIndexPath: indexPath)
@@ -388,9 +415,11 @@ class LYTitleBarController:UIViewController,UICollectionViewDelegate,UICollectio
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return self.childViewControllers.count
     }
+}
+
+//MARK: - collection代理
+extension LYTitleBarController :UICollectionViewDelegate{
     
-    
-    //MARK: - collection代理
     func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
         
         let index = scrollView.contentOffset.x / screenW
@@ -415,6 +444,5 @@ class LYTitleBarController:UIViewController,UICollectionViewDelegate,UICollectio
             
         }
     }
+
 }
-
-
